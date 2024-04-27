@@ -1,11 +1,16 @@
 package main
 
 import (
-	"github.com/dman926/nixbro/cmd"
-	_ "github.com/dman926/nixbro/cmd/os"
-	_ "github.com/dman926/nixbro/cmd/version"
+	"log"
+
+	"github.com/dman926/nixbro/pages"
+
+	tea "github.com/charmbracelet/bubbletea"
 )
 
 func main() {
-	cmd.Execute()
+	p := tea.NewProgram(pages.Start(), tea.WithAltScreen())
+	if _, err := p.Run(); err != nil {
+		log.Fatal(err)
+	}
 }
