@@ -6,6 +6,10 @@ import (
 
 type Welcome struct{}
 
+func WelcomeInit() Welcome {
+	return Welcome{}
+}
+
 func (w Welcome) Update(m Model, msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:

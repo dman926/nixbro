@@ -6,7 +6,17 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-type Choice struct{}
+type Choice struct {
+	choices  []string
+	selected map[int]struct{}
+}
+
+func ChoiceInit() Choice {
+	return Choice{
+		choices:  []string{"Buy carrots", "Buy celery", "Buy kohlrabi"},
+		selected: make(map[int]struct{}),
+	}
+}
 
 func (c Choice) Update(m Model, msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
@@ -22,15 +32,15 @@ func (c Choice) Update(m Model, msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.cursor.Up()
 			}
 		case "down", "j":
-			if m.cursor.Y < len(m.choices)-1 {
+			if m.cursor.Y < len(c.choices)-1 {
 				m.cursor.Down()
 			}
 		case "enter", " ":
-			_, ok := m.selected[m.cursor.Y]
+			_, ok := c.selected[m.cursor.Y]
 			if ok {
-				delete(m.selected, m.cursor.Y)
+				delete(c.selected, m.cursor.Y)
 			} else {
-				m.selected[m.cursor.Y] = struct{}{}
+				c.selected[m.cursor.Y] = struct{}{}
 			}
 		}
 	}
@@ -41,14 +51,14 @@ func (c Choice) Update(m Model, msg tea.Msg) (tea.Model, tea.Cmd) {
 func (c Choice) View(m Model) string {
 	s := "What should we buy at the market?\n\n"
 
-	for i, choice := range m.choices {
+	for i, choice := range c.choices {
 		cursor := " "
 		if m.cursor.Y == i {
 			cursor = ">"
 		}
 
 		checked := " "
-		if _, ok := m.selected[i]; ok {
+		if _, ok := c.selected[i]; ok {
 			checked = "x"
 		}
 

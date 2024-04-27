@@ -17,26 +17,18 @@ type Model struct {
 	cursor cursor.Cursor
 	page   Page
 	pages  []PageModel
-
-	choices  []string
-	selected map[int]struct{}
 }
 
 const (
-	ChoicePage Page = iota
-	WelcomePage
+	WelcomePage Page = iota
+	ChoicePage
 )
 
 func Start() Model {
 	return Model{
-		page:  WelcomePage,
-		pages: []PageModel{Choice{}, Welcome{}},
-
 		cursor: cursor.New(),
-
-		choices: []string{"Buy carrots", "Buy celery", "Buy kohlrabi"},
-
-		selected: make(map[int]struct{}),
+		page:   WelcomePage,
+		pages:  []PageModel{WelcomeInit(), ChoiceInit()},
 	}
 }
 
