@@ -33,7 +33,7 @@ func Start() Model {
 }
 
 func (m Model) Init() tea.Cmd {
-	return tea.SetWindowTitle("Grocery List")
+	return tea.SetWindowTitle("Nix Bro")
 }
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
