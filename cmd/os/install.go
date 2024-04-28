@@ -2,49 +2,75 @@ package os
 
 import (
 	"fmt"
+	"os/exec"
 
-	"github.com/spf13/cobra"
+	tea "github.com/charmbracelet/bubbletea"
 )
 
-func init() {
-	osRootCmd.AddCommand(installCmd)
+/*
+	(Parameterize) Clone config
+
+	(Parameterize) Prompt for:
+		Hostname
+		Drive args (Show prompt of current disks and context for selection)
+
+	(Parameterize toggle) Run disko to format disks (default) / Attempt mount for install
+		`sudo nix --experimental-features "nix-command flakes" run github:nix-community/disko -- --mode disko $DISKO PATH [--arg device '"/dev/nvme0nX"' --arg device2 '"/dev/sdX"']`
+		!Update config to match!
+
+	Scaffold folders
+		Scaffold /persist folders with correct ownership and permissions
+
+	Install nixos
+		`nixos-install --root /mnt --flake $FlakeLocation#$Hostname`
+
+	Secrets
+		Add machine's age public fingerprint to .sops.yaml and update secret files (nixos/secrets.yaml | nixos/users/*\/secrets.yaml)
+			`nix-shell -p ssh-to-age --run 'cat /etc/ssh/ssh_host_ed25519_key.pub | ssh-to-age'`
+
+	Install nixos again to get secrets working (namely user passwords)
+		`nixos-install --root /mnt --flake $FlakeLocation#$Hostname`
+
+	Reboot
+
+	First user login prompt for final setup (this will come later)
+		SSH / GPG keys
+*/
+
+type InstallReturn struct {
 }
 
-var installCmd = &cobra.Command{
-	Use:   "install",
-	Short: "Install NixOS",
-	Long:  `Install NixOS with my NixOS config`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Install")
+func RunInstall() tea.Msg {
+	return InstallReturn{}
+}
 
-		/*
-			(Parameterize) Clone config
+func cloneConfig(remoteUrl string, configAbsPath string) (err error) {
+	cloneCmd := exec.Command("git", "clone", remoteUrl, configAbsPath)
+	err = cloneCmd.Run()
 
-			(Parameterize) Prmpt for:
-				Hostname
-				Drive args (Show prompt of current disks and context for selection)
+	return
+}
 
-			(Parameterize toggle) Run disko to format disks (default) / Attempt mount for install
-				`sudo nix --experimental-features "nix-command flakes" run github:nix-community/disko -- --mode disko $DISKO PATH [--arg device '"/dev/nvme0nX"' --arg device2 '"/dev/sdX"']`
-				!Update config to match!
+func discPrompt(configAbsPath string, hostname string) {
+	// TODO
+}
 
-			Scaffold folders
-				Scaffold /persist folders with correct ownership and permissions
+func scaffoldPersist(configAbsPath string, hostname string) (err error) {
+	return
+}
 
-			Install nixos
-				`nixos-install --root /mnt --flake $FlakeLocation#$Hostname`
+func installNixos(configAbsPath string, hostname string) (err error) {
+	installCmd := exec.Command("nixos-install", "--root /mnt", "--flake \""+fmt.Sprintf("%s#%s", configAbsPath, hostname)+"\"")
+	err = installCmd.Run()
 
-			Secrets
-				Add machine's age public fingerprint to .sops.yaml and update secret files (nixos/secrets.yaml | nixos/users/*\/secrets.yaml)
-					`nix-shell -p ssh-to-age --run 'cat /etc/ssh/ssh_host_ed25519_key.pub | ssh-to-age'`
+	return
+}
 
-			Install nixos again to get secrets working (namely user passwords)
-				`nixos-install --root /mnt --flake $FlakeLocation#$Hostname`
+func scaffoldSecrets(configAbsPath string, hostname string) (err error) {
+	// TODO
+	return
+}
 
-			Reboot
-
-			First user login prompt for final setup
-				SSH / GPG keys
-		*/
-	},
+func reboot() {
+	// TODO
 }
