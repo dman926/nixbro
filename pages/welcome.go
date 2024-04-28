@@ -10,13 +10,18 @@ func WelcomeInit() Welcome {
 	return Welcome{}
 }
 
-func (w Welcome) Update(m Model, msg tea.Msg) (tea.Model, tea.Cmd) {
+func (w Welcome) Page() Page {
+	return WelcomePage
+}
+
+func (w Welcome) PageTitle() pageTitle {
+	return pageTitle("Welcome")
+}
+
+func (w Welcome) Update(m *Model, msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
-		case "1":
-			m.page = ChoicePage
-			return m, nil
 		case "ctrl+c", "q":
 			return m, tea.Quit
 		}
@@ -26,11 +31,7 @@ func (w Welcome) Update(m Model, msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (w Welcome) View(m Model) string {
-	s := "This is the other screen\n"
-
-	s += "\nPress 1 to go to the other screen.\n"
-
-	s += "\nPress q to quit.\n"
+	s := "This is the welcome page\n"
 
 	return s
 }
